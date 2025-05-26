@@ -1,0 +1,3 @@
+# UIPasteConfigurationSupporting
+
+> Protocol

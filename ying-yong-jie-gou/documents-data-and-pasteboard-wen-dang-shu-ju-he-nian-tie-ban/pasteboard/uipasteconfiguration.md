@@ -1,0 +1,5 @@
+# UIPasteConfiguration
+
+> Class
+
+\

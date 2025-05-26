@@ -1,0 +1,6 @@
+---
+icon: f
+---
+
+# UIGuidedAccessRestrictionStateForIdentifier
+

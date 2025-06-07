@@ -21,9 +21,9 @@ description: 在系统终止应用后，将其恢复到之前的状态。
 
 ### 为你的应用启用状态保留和恢复功能(Enable state preservation and restoration for your app) <a href="#enable-state-preservation-and-restoration-for-your-app" id="enable-state-preservation-and-restoration-for-your-app"></a>
 
-You opt-in to state preservation and restoration by implementing your app delegate’s [`application:shouldSaveSecureApplicationState:`](https://developer.apple.com/documentation/uikit/uiapplicationdelegate/application\(_:shouldsavesecureapplicationstate:\)?language=objc) and [`application:shouldRestoreSecureApplicationState:`](https://developer.apple.com/documentation/uikit/uiapplicationdelegate/application\(_:shouldrestoresecureapplicationstate:\)?language=objc) methods. Both methods return a Boolean value indicating whether the associated process should occur, and in most cases you simply return [`true`](https://developer.apple.com/documentation/swift/true?language=objc). However, you can return [`false`](https://developer.apple.com/documentation/swift/false?language=objc) at times when restoring your app’s interface might not be appropriate.
+通过实现应用程序代理的[`application:shouldSaveSecureApplicationState:`](https://developer.apple.com/documentation/uikit/uiapplicationdelegate/application\(_:shouldsavesecureapplicationstate:\)?language=objc)和 [`application:shouldRestoreSecureApplicationState:`](https://developer.apple.com/documentation/uikit/uiapplicationdelegate/application\(_:shouldrestoresecureapplicationstate:\)?language=objc)方法，您可以选择加入状态保留和恢复功能。这两个方法都返回一个布尔值，指示相关进程是否应该发生，在大多数情况下，您只需返回[`true`](https://developer.apple.com/documentation/swift/true?language=objc)。但是，在恢复应用程序界面可能不合适的时候，您可以返回[`false`](https://developer.apple.com/documentation/swift/false?language=objc)。
 
-When UIKit calls your [`application:shouldSaveSecureApplicationState:`](https://developer.apple.com/documentation/uikit/uiapplicationdelegate/application\(_:shouldsavesecureapplicationstate:\)?language=objc) method, you can save data in addition to returning [`true`](https://developer.apple.com/documentation/swift/true?language=objc). You might save data that you intend to use during the restoration process. For example, the following code shows an example that saves the app’s current version number. At restoration time, the [`application:shouldRestoreSecureApplicationState:`](https://developer.apple.com/documentation/uikit/uiapplicationdelegate/application\(_:shouldrestoresecureapplicationstate:\)?language=objc) method checks the version number in the archive and prevents restoration from occurring if it doesn’t match the expected version.
+当UIKit调用你的 [`application:shouldSaveSecureApplicationState:`](https://developer.apple.com/documentation/uikit/uiapplicationdelegate/application\(_:shouldsavesecureapplicationstate:\)?language=objc)方法时，除了返回[`true`](https://developer.apple.com/documentation/swift/true?language=objc)之外，你还可以保存数据。你可能会保存打算在恢复过程中使用的数据。例如，以下代码展示了一个保存应用当前版本号的示例。在恢复时，[`application:shouldRestoreSecureApplicationState:`](https://developer.apple.com/documentation/uikit/uiapplicationdelegate/application\(_:shouldrestoresecureapplicationstate:\)?language=objc)方法会检查归档文件中的版本号，如果与预期版本不匹配，则阻止恢复操作。
 
 ```
 func application(_ application: UIApplication, 
@@ -48,7 +48,7 @@ func application(_ application: UIApplication,
 }
 ```
 
-If you prevent restoration from occurring, you can still configure your app’s interface manually in the [`application:didFinishLaunchingWithOptions:`](https://developer.apple.com/documentation/uikit/uiapplicationdelegate/application\(_:didfinishlaunchingwithoptions:\)?language=objc) method of your app delegate.
+如果阻止恢复操作发生，你仍可以在应用程序委托的[`application:didFinishLaunchingWithOptions:`](https://developer.apple.com/documentation/uikit/uiapplicationdelegate/application\(_:didfinishlaunchingwithoptions:\)?language=objc)方法中手动配置应用程序的界面。
 
 ### 为你的视图控制器分配恢复标识符(Assign restoration identifiers to your view controllers) <a href="#assign-restoration-identifiers-to-your-view-controllers" id="assign-restoration-identifiers-to-your-view-controllers"></a>
 
@@ -60,16 +60,16 @@ If you prevent restoration from occurring, you can still configure your app’s 
 
 你无需为每个视图控制器分配恢复标识符。事实上，有时你可能并不想保留所有视图控制器。例如，如果你的应用显示一个临时登录屏幕，你可能不希望保留该屏幕。相反，你会希望在恢复时决定是否显示它。在这种情况下，你不会为登录屏幕的视图控制器分配恢复标识符。
 
-For detailed information about what gets preserved, see [About the UI preservation process](https://developer.apple.com/documentation/uikit/about-the-ui-preservation-process?language=objc).
+有关保留内容的详细信息，请参阅 [About the UI preservation process](https://developer.apple.com/documentation/uikit/about-the-ui-preservation-process?language=objc).
 
 ### 为你的应用程序编码和解码自定义信息(Encode and decode custom information for your app)
 
-During the preservation process, UIKit calls the [`encodeRestorableStateWithCoder:`](https://developer.apple.com/documentation/uikit/uistaterestoring/encoderestorablestate\(with:\)?language=objc) method of each preserved view and view controller. Use this method to preserve the information that you need to return the view or view controller to its current state.
+在保存过程中，UIKit 会调用每个要保存的视图和视图控制器的[`encodeRestorableStateWithCoder:`](https://developer.apple.com/documentation/uikit/uistaterestoring/encoderestorablestate\(with:\)?language=objc)方法。使用此方法来保存将视图或视图控制器恢复到当前状态所需的信息。
 
-* **Do** save details about the visual state of views and controls.
-* **Do** save references to child view controllers that you also want to preserve.
-* **Do** save information that can be discarded without affecting the user’s data.
-* **Don’t** include data that’s already in your app’s persistent storage. Instead, include an identifier that you can use to locate that data later.
+* 一定要保存视图和控件视觉状态的详细信息。(**Do** save details about the visual state of views and controls.)
+* 一定要保存你也希望保留的子视图控制器的引用。(**Do** save references to child view controllers that you also want to preserve.)
+* 一定要保存即便丢弃也不影响用户数据的信息。(**Do** save information that can be discarded without affecting the user’s data.)
+* 不要包含已存在于应用持久存储中的数据。相反，应包含一个标识符，以便日后用于定位该数据。(**Don’t** include data that’s already in your app’s persistent storage. Instead, include an identifier that you can use to locate that data later.)
 
 状态保留并不能替代将应用程序的数据保存到磁盘。UIKit 可以自行决定丢弃状态保留数据，使您的应用程序恢复到默认状态。使用保留过程来存储有关应用程序用户界面状态的信息，例如表格中当前选定的行。不要用它来存储表格中包含的数据。
 
@@ -99,19 +99,19 @@ override func encodeRestorableState(with coder: NSCoder) {
 }
 ```
 
-For more information about how UIKit preserves your app’s views, view controllers, and state information, see [About the UI preservation process](https://developer.apple.com/documentation/uikit/about-the-ui-preservation-process?language=objc).
+有关UIKit如何保留您应用的视图、视图控制器和状态信息的更多信息，请参阅“关于UI保留过程”。see [About the UI preservation process](https://developer.apple.com/documentation/uikit/about-the-ui-preservation-process?language=objc).
 
 ### 接到请求时创建视图控制器(Create view controllers when asked) <a href="#create-view-controllers-when-asked" id="create-view-controllers-when-asked"></a>
 
-If preserved state information is available when your app is launched, the system attempts to restore your app’s interface using the preserved data.
+如果在启动您的应用时存在保留的状态信息，系统会尝试使用保留的数据恢复您应用的界面。
 
-1. UIKit calls your app delegate’s [`application:shouldRestoreSecureApplicationState:`](https://developer.apple.com/documentation/uikit/uiapplicationdelegate/application\(_:shouldrestoresecureapplicationstate:\)?language=objc) method to determine if restoration should proceed.
-2. UIKit uses your app’s storyboards to recreate your view controllers.
-3. UIKit calls each view controller’s [`decodeRestorableStateWithCoder:`](https://developer.apple.com/documentation/uikit/uistaterestoring/decoderestorablestate\(with:\)?language=objc) method to restore its state information.
+1. UIKit会调用应用程序代理的[`application:shouldRestoreSecureApplicationState:`](https://developer.apple.com/documentation/uikit/uiapplicationdelegate/application\(_:shouldrestoresecureapplicationstate:\)?language=objc)方法，以确定是否应继续进行恢复操作。
+2. UIKit会使用应用程序的故事板来重新创建视图控制器。
+3. UIKit会调用每个视图控制器的[`decodeRestorableStateWithCoder:`](https://developer.apple.com/documentation/uikit/uistaterestoring/decoderestorablestate\(with:\)?language=objc)方法来恢复其状态信息。
 
-UIKit loads both the view controller and its views from your storyboard initially. After those objects have been loaded and initialized, UIKit begins restoring their state information. Use your [`decodeRestorableStateWithCoder:`](https://developer.apple.com/documentation/uikit/uistaterestoring/decoderestorablestate\(with:\)?language=objc) methods to return your view controller to its previous state.
+最初，UIKit 会从您的故事板中加载视图控制器及其视图。在加载并初始化这些对象后，UIKit 便开始恢复它们的状态信息。使用[`decodeRestorableStateWithCoder:`](https://developer.apple.com/documentation/uikit/uistaterestoring/decoderestorablestate\(with:\)?language=objc)方法将视图控制器恢复到先前的状态。
 
-The following code shows the method for decoding the state that was encoded in the previous example. This method restores the view controller’s data from the preserved user ID. If a text field was being edited, this method also restores the in-progress value and makes the corresponding text field the first responder, which displays the keyboard for that text field.
+以下代码展示了对上一示例中编码的状态进行解码的方法。此方法从保留的用户ID中恢复视图控制器的数据。如果某个文本字段正在编辑，此方法还会恢复进行中的值，并使相应的文本字段成为第一响应者，从而为该文本字段显示键盘。
 
 ```
 override func decodeRestorableState(with coder: NSCoder) {
@@ -145,4 +145,4 @@ override func decodeRestorableState(with coder: NSCoder) {
 }
 ```
 
-Defining your view controllers in storyboards is the easiest way to manage state restoration, but it isn’t the only way. For more information about other ways to recreate your view controllers, see [About the UI restoration process](https://developer.apple.com/documentation/uikit/about-the-ui-restoration-process?language=objc).
+在故事板中定义视图控制器是管理状态恢复最简单的方法，但这并非唯一的方法。有关重新创建视图控制器的其他方法的更多信息，请参阅“关于UI恢复过程”。see [About the UI restoration process](https://developer.apple.com/documentation/uikit/about-the-ui-restoration-process?language=objc).
